@@ -115,6 +115,7 @@ module Make (CB : Callbacks) = struct
     in
     let supported_commands =
       [
+        "tlaplus.tlaps.todo-name.lsp";
         "tlaplus.tlaps.check-step.lsp";
         "tlaplus.tlaps.proofStepMarkers.fetch.lsp";
         "tlaplus.tlaps.currentProofStep.set.lsp";
@@ -258,6 +259,35 @@ module Make (CB : Callbacks) = struct
           "arguments missing" cb_state
 
   (* Example request:
+     {"jsonrpc":"2.0","id":6,"method":"workspace/executeCommand","params":{
+      "command":"tlaplus.tlaps.todo-name.lsp",
+      "arguments":[
+        {"uri":"file:///home/.../aaa.tla","version":1},
+        {"start":{"line":2,"character":15},"end":{"line":2,"character":15}} ]}}
+  *)
+  let handle_todo_name (jsonrpc_req : Jsonrpc.Request.t)
+      (params : LspT.ExecuteCommandParams.t) cb_state =
+    Eio.traceln "COMMAND: todo-name";
+    match params.arguments with
+    (* | Some [ uri_vsn_arg; range_arg ] -> *)
+        (* let uri_vsn =
+          LspT.VersionedTextDocumentIdentifier.t_of_yojson uri_vsn_arg
+        in
+        let range = LspT.Range.t_of_yojson range_arg in *)
+        (* let cb_state =
+          CB.prove_step cb_state uri_vsn.uri uri_vsn.version range
+        in
+        reply_ok jsonrpc_req `Null cb_state *)
+        (* reply_error jsonrpc_req (Jsonrpc.Response.Error.Code.Other 42)
+          "to be implemented" cb_state *)
+    | Some _ ->
+        reply_error jsonrpc_req Jsonrpc.Response.Error.Code.InvalidParams
+          "two arguments expected" cb_state
+    | None ->
+        reply_error jsonrpc_req Jsonrpc.Response.Error.Code.InvalidParams
+          "arguments missing" cb_state
+
+  (* Example request:
      {"jsonrpc":"2.0",
       "id":1,
       "method":"workspace/executeCommand",
@@ -275,6 +305,8 @@ module Make (CB : Callbacks) = struct
         handle_cmd_current_proof_step_set jsonrpc_req params cb_state
     | "tlaplus.tlaps.moduleSearchPaths.updated.lsp" ->
         handle_cmd_module_search_paths_updated jsonrpc_req params cb_state
+    | "tlaplus.tlaps.todo-name.lsp" ->
+        handle_todo_name jsonrpc_req params cb_state
     | unknown ->
         handle_jsonrpc_req_unknown jsonrpc_req
           (Printf.sprintf "command unknown: %s" unknown)
