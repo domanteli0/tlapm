@@ -1,0 +1,6 @@
+build-install:
+    # make opam-update
+    # make opam-deps
+    # make opam-deps-opt
+    make
+    make install
