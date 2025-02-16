@@ -8,7 +8,7 @@
 open Ext
 
 type 'a dq = { front : 'a list ; flen : int ;
-               rear : 'a list  ; rlen : int }
+               rear : 'a list  ; rlen : int } [@@deriving show]
 
 let empty = { front = [ ] ; flen = 0 ;
               rear  = [ ] ; rlen = 0 }

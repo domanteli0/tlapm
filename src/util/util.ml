@@ -9,8 +9,8 @@ open Ext
 open Property
 open Loc
 
-type hint = string wrapped
-type hints = hint list
+type hint = string wrapped [@@deriving show]
+type hints = hint list [@@deriving show]
 
 let pp_print_hint ff h = Format.pp_print_string ff h.core
 

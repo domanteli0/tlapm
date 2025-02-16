@@ -20,13 +20,13 @@
 
 (** Property identifiers. They may be safely compared using
     [Stdlib.compare]. *)
-type pid
+type pid [@@deriving show]
 
 (** The abstract type of "properties". All types can be injected and
     projected from this type safely. *)
-type prop
+type prop [@@deriving show]
 
-type props = prop list
+type props = prop list [@@deriving show]
 
 (** [pid p] returns the pid of property [p]. All properties of the
     same pid store values of the same type (and this is statically
@@ -38,11 +38,11 @@ val pid : prop -> pid
     if it is called on a property not created with its matching
     [set]. *)
 type 'a pfuncs = {
-  get : prop -> 'a ;
-  set : 'a -> prop ;
+  get : prop -> 'a [@opaque];
+  set : 'a -> prop [@opaque];
   pid : pid ;
   rep : string ;
-}
+} [@@deriving show]
 
 (** [make ()] creates a new property and returns its getters, setters
     and pid in as a [pfuncs]. In most cases, this function can only be
@@ -60,7 +60,7 @@ val make : ?uuid:string -> string -> 'a pfuncs
 type 'a wrapped = {
   core  : 'a ;
   props : props ;
-}
+} [@@deriving show]
 
 (** [has w pf] checks if the properties of [w] include any with pid
     [pf.pid]. *)

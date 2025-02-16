@@ -76,7 +76,7 @@ let get_qed_proof q =
 type obligation_kind =
     | Ob_main
     | Ob_support
-    | Ob_error of string
+    | Ob_error of string [@@deriving show]
 
 
 type obligation = {

@@ -131,6 +131,7 @@ let start_async_with_exec st doc_uri doc_text range paths events_adder
       "--printallobs";
       "--prefer-stdlib";
       "--stdin";
+      "-C";
       mod_name;
     ]
   in

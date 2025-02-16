@@ -29,7 +29,7 @@ type t =
   | Lambdify
   | ENABLEDaxioms
   | LevelComparison
-  | Trivial
+  | Trivial [@@deriving show]
 
 
 (* expr/fmt.ml *)
@@ -64,4 +64,4 @@ type result =
   | Failed of string
   | Timedout
   | Interrupted
-  | NotTried of string
+  | NotTried of string [@@deriving show]

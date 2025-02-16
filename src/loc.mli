@@ -12,9 +12,9 @@ type pt_ = { line : int ;  (* line number *)
               bol : int ;  (* beginning of line *)
               col : int ;  (* column number relative to beginning of line,
                 see the implementation of the function `locus_of_position`. *)
-            }
+            } [@@deriving show]
 
-type pt = Actual of pt_ | Dummy
+type pt = Actual of pt_ | Dummy [@@deriving show]
 
 (** A location that is always invalid (but both = and == itself). *)
 val dummy : pt
@@ -41,7 +41,7 @@ type locus = {
   start : pt ;
   stop  : pt ;
   file  : string ;
-}
+} [@@deriving show]
 
 (** left edge *)
 val left_of : locus -> locus

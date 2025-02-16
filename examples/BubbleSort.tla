@@ -126,9 +126,9 @@ THEOREM IsPermOfTransitive ==
 }
 *)
 \* BEGIN TRANSLATION
-VARIABLES A, A0, i, j, pc
+VARIABLES pc, A, A0, i, j
 
-vars == << A, A0, i, j, pc >>
+vars == << pc, A, A0, i, j >>
 
 Init == (* Global variables *)
         /\ A \in [1..N -> Int]
@@ -157,9 +157,11 @@ Lbl_2 == /\ pc = "Lbl_2"
                     /\ UNCHANGED << A, j >>
          /\ A0' = A0
 
+(* Allow infinite stuttering to prevent deadlock on termination. *)
+Terminating == pc = "Done" /\ UNCHANGED vars
+
 Next == Lbl_1 \/ Lbl_2
-           \/ (* Disjunct to prevent deadlock on termination *)
-              (pc = "Done" /\ UNCHANGED vars)
+           \/ Terminating
 
 Spec == /\ Init /\ [][Next]_vars
         /\ WF_vars(Next)

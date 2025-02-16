@@ -18,10 +18,10 @@ the 1-argument case as the same as
 no conjunction, and the many-argument
 case as similar to [And].
 *)
-type bullet = And | Or | Refs
-type quantifier = Forall | Exists
-type modal_op = Box | Dia
-type fairness_op  = Weak | Strong
+type bullet = And | Or | Refs [@@deriving show]
+type quantifier = Forall | Exists [@@deriving show]
+type modal_op = Box | Dia [@@deriving show]
+type fairness_op  = Weak | Strong [@@deriving show]
 
 (** Type representing arguments to
 operators.
@@ -34,13 +34,13 @@ expression argument.
 *)
 type shape =
   | Shape_expr
-  | Shape_op of int
+  | Shape_op of int [@@deriving show]
 
 (** An "expression" is either
 a TLA+ expression,
 operator or sequent
 *)
-type expr = expr_ wrapped
+type expr = expr_ wrapped [@@deriving show]
 and expr_ =
     (* operators *)
   | Ix of int
@@ -93,16 +93,16 @@ and expr_ =
   | At of bool (*
       true -> @ from except or
       false -> @ from proof-step *)
-  | Parens of expr * pform
+  | Parens of expr * pform [@@deriving show]
 
-and pform = pform_ wrapped
+and pform = pform_ wrapped [@@deriving show]
 and pform_ =
   | Syntax
       (** actual parens in
       source syntax *)
   | Nlabel of string * hints
       (** named label *)
-  | Xlabel of string * (hint * int) list
+  | Xlabel of string * (hint * int) list [@@deriving show]
       (** indexed label *)
 
 (** subexpression selectors *)
@@ -113,38 +113,38 @@ and sel =
   | Sel_right
   | Sel_at
   | Sel_inst of expr list
-  | Sel_lab of string * expr list
+  | Sel_lab of string * expr list [@@deriving show]
 
 (** Except specification *)
-and exspec = expoint list * expr
+and exspec = expoint list * expr [@@deriving show]
 and expoint =
   | Except_dot of string
-  | Except_apply of expr
+  | Except_apply of expr [@@deriving show]
 
 (** Bound variables *)
-and bounds = bound list
+and bounds = bound list [@@deriving show]
 and bound =
-    hint * kind * bound_domain
+    hint * kind * bound_domain [@@deriving show]
 (* tuply bounds *)
-and tuply_bounds = tuply_bound list
+and tuply_bounds = tuply_bound list [@@deriving show]
 and tuply_bound =
-    tuply_name * bound_domain
+    tuply_name * bound_domain [@@deriving show]
 and tuply_name =
   | Bound_name of hint
-  | Bound_names of hints
+  | Bound_names of hints [@@deriving show]
 and bound_domain =
   | No_domain
   | Domain of expr
-  | Ditto
+  | Ditto [@@deriving show]
 
 (** Definitions *)
-and defn = defn_ wrapped
+and defn = defn_ wrapped [@@deriving show]
 and defn_ =
   | Recursive of hint * shape
   | Operator of hint * expr
   | Instance of hint * instance
   | Bpragma of hint * expr * (
-      (hint * backend_args) list list)
+      (hint * backend_args) list list) [@@deriving show]
 
 (** Instance *)
 and instance = {
@@ -154,7 +154,7 @@ and instance = {
   inst_mod  : string ;
   (** substitution *)
   inst_sub  : (hint * expr) list ;
-}
+} [@@deriving show]
 
 (** The [sequent] type represents
 (a generalisation of) TLA+
@@ -167,26 +167,26 @@ and sequent = {
   (always a TLA+ expression)
   *)
   active  : expr ;
-}
+} [@@deriving show]
 
 and kind =
   | Constant | State | Action
-  | Temporal | Unknown
+  | Temporal | Unknown [@@deriving show]
 
 and backend_args =
   | Bdef
   | Bstring of string
-  | Bfloat of float
+  | Bfloat of float [@@deriving show]
 
 and backend_info =
-  | Bwhich | Btimeout | Btactic
+  | Bwhich | Btimeout | Btactic [@@deriving show]
 
 and backend_action =
-  | All | Once
+  | All | Once [@@deriving show]
 
 (** Antecedents of a sequent *)
-and ctx = hyp Deque.dq
-and hyp = hyp_ wrapped
+and ctx = hyp Deque.dq [@@deriving show]
+and hyp = hyp_ wrapped [@@deriving show]
 and hyp_ =
   | Fresh of
         hint * shape * kind * hdom
@@ -194,19 +194,19 @@ and hyp_ =
   | Flex of hint
   | Defn of defn * wheredef *
             visibility * export
-  | Fact of expr * visibility * time
+  | Fact of expr * visibility * time [@@deriving show]
 
 and hdom = Unbounded
-  | Bounded of expr * visibility
+  | Bounded of expr * visibility [@@deriving show]
 
 and wheredef = Builtin
-  | Proof of time | User
+  | Proof of time | User [@@deriving show]
 
-and export = Local | Export
+and export = Local | Export [@@deriving show]
 
-and visibility = Visible | Hidden
+and visibility = Visible | Hidden [@@deriving show]
 
-and time = Now | Always | NotSet
+and time = Now | Always | NotSet [@@deriving show]
 
 val unditto:
     bounds -> bounds
@@ -233,14 +233,14 @@ val bounds_of_parameters:
 type meta = {
   hkind : hyp_kind ;
   name : string ;
-}
-and hyp_kind = Axiom | Hypothesis | Goal
+} [@@deriving show]
+and hyp_kind = Axiom | Hypothesis | Goal [@@deriving show]
 
 (** Attached to the expression part of a fact, in a sequent *)
 val meta_prop : meta pfuncs
 
 (** SMT-LIB pattern *)
-type pat = expr list
+type pat = expr list [@@deriving show]
 
 (** Attached to the body of a quantified expression *)
 val pattern_prop :

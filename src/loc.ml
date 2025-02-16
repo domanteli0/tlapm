@@ -5,16 +5,16 @@ Copyright (C) 2008-2010  INRIA and Microsoft Corporation
 type pt_ = { line : int ;
               bol : int ;
               col : int ;
-            }
+            } [@@deriving show]
 
-type pt = Actual of pt_ | Dummy
+type pt = Actual of pt_ | Dummy [@@deriving show]
 
 let dummy = Dummy
 
 type locus = { start : pt ;
                stop  : pt ;
                file : string ;
-             }
+             } [@@deriving show]
 
 let left_of l = { l with stop = l.start }
 let right_of l = { l with start = l.stop }

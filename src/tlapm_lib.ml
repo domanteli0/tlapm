@@ -575,6 +575,14 @@ let main fs =
         let (mcx, m) = process_module mcx m in
         Sm.add m.core.name.core m mcx
       in
+      (* let _ = print_endline "TESTING" in
+      let l_str = Sm.map [%derive.show: mule] mcx in
+      Sm.iter (fun k v -> Printf.printf "key: %s, value: %s\n" k v) l_str; *)
+      (* let iter = Sm.iter [%derive.show: weak] in *)
+      (* let mcx_string = Sm.show (fun m -> m.core.name.core) mcx in
+      (* let () = print_endline ("MCX Contents:\n" ^ mcx_string) in *)
+      let () = print_endline (Sm.show mcx) in *)
+      (* Sm.iter () ;; *)
       ignore (List.fold_left f mcx mods)
   end ;
   if !Params.stats then Clocks.report ()

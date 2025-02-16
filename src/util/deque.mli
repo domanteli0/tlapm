@@ -5,7 +5,7 @@
  * Copyright (C) 2008-2019  INRIA and Microsoft Corporation
  *)
 
-type 'a dq
+type 'a dq [@@deriving show]
 
 val empty : 'a dq
 val size  : 'a dq -> int

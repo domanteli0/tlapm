@@ -80,6 +80,6 @@ type builtin =
   | ToString
     (* special *)
   | Unprimable
-  | Irregular
+  | Irregular [@@deriving show]
 
 val builtin_to_string : builtin -> string

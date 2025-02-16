@@ -9,7 +9,7 @@
 
 open Ext
 
-type uuid = Int64.t * Int64.t
+type uuid = Int64.t * Int64.t [@@deriving show]
 
 let uuid_of_string s : uuid =
   assert (String.length s = 36) ;
@@ -26,19 +26,19 @@ let uuid_of_string s : uuid =
 
 type pid =
   | Pid of int
-  | Puuid of uuid
+  | Puuid of uuid [@@deriving show]
 
-type prop = pid * Obj.t
+type prop = pid * Obj.t [@opaque] [@@deriving show]
 
 (* [(Pid(7), Obj.t); ...]  *)
-type props = prop list
+type props = prop list [@@deriving show]
 
 type 'a pfuncs = {
-  get : prop -> 'a ;
-  set : 'a -> prop ;
+  get : prop -> 'a [@opaque] ;
+  set : 'a -> prop [@opaque] ;
   pid : pid ;
   rep : string ;
-}
+} [@@deriving show]
 
 let ids : int ref = ref 0
 
@@ -60,9 +60,9 @@ let make ?uuid rep =
     ; pid = pid ; rep = rep }
 
 type 'a wrapped = {
-  core : 'a ;
+  core : 'a;
   props : props ;
-}
+} [@@deriving show]
 
 let has w pf =
   List.exists (fun p -> pf.pid = fst p) w.props

@@ -41,7 +41,7 @@ type t =
   | Lambdify
   | ENABLEDaxioms
   | LevelComparison
-  | Trivial
+  | Trivial [@@deriving show]
 
 
 let timeout m =
@@ -183,4 +183,4 @@ type result =
   | Failed of string
   | Timedout
   | Interrupted
-  | NotTried of string
+  | NotTried of string [@@deriving show]

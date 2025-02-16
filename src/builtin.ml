@@ -30,7 +30,7 @@ type builtin =
   | JavaTime | TLCGet | TLCSet | Permutations
   | SortSeq | RandomElement | Any | ToString
     (* special *)
-  | Unprimable | Irregular
+  | Unprimable | Irregular [@@deriving show]
 
 let builtin_to_string = function
   | TRUE -> "TRUE"

@@ -15,6 +15,10 @@ PREFIX=$(OPAM_SWITCH_PREFIX)
 
 DUNE_BUILD_DIR=_build
 
+build-install: build install
+
+deps: opam-update opam-deps opam-deps-opt
+
 all: build
 
 opam-update: # Update the package lists and install updates.
