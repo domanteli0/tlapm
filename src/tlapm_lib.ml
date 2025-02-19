@@ -61,6 +61,7 @@ module Clocks = struct
 
 end
 
+let std_fmt = Format.std_formatter
 
 let mkdir_tlaps t =
     let cachedir = !Params.cachedir in
@@ -568,21 +569,26 @@ let main fs =
     (* load the transitive closure over extends of all modules *)
     (* TODO: load also modules that occur in `INSTANCE` statements from extended modules. *)
     let mcx = Module.Save.complete_load ~clock:Clocks.parsing mcx in
+    let test_print () = 
+        Format.print_string "BEGIN: [MAIN] modctx\n";
+        Module.Fmt.pp_print_modctx std_fmt mcx;
+        Format.print_string "END: [MAIN] modctx\n" in
+    if Params.debugging "test_print" then test_print ();
     (* flatten the modules *)
     let (mcx, mods) = Module.Dep.schedule mcx in
       let f mcx m =
         (* processing the proofs in the commandline modules *)
         let (mcx, m) = process_module mcx m in
+        let test_print () =
+            Format.print_string "BEGIN: [LOOP]\n";
+            Format.print_string "[LOOP] modctx\n";
+            Module.Fmt.pp_print_modctx std_fmt mcx;
+            Format.print_string "[LOOP] module\n";
+            Module.Fmt.pp_print_module (Deque.empty, Ctx.dot) std_fmt m;
+            Format.print_string "END: [LOOP]\n" in
+        if Params.debugging "test_print" then test_print ();
         Sm.add m.core.name.core m mcx
       in
-      (* let _ = print_endline "TESTING" in
-      let l_str = Sm.map [%derive.show: mule] mcx in
-      Sm.iter (fun k v -> Printf.printf "key: %s, value: %s\n" k v) l_str; *)
-      (* let iter = Sm.iter [%derive.show: weak] in *)
-      (* let mcx_string = Sm.show (fun m -> m.core.name.core) mcx in
-      (* let () = print_endline ("MCX Contents:\n" ^ mcx_string) in *)
-      let () = print_endline (Sm.show mcx) in *)
-      (* Sm.iter () ;; *)
       ignore (List.fold_left f mcx mods)
   end ;
   if !Params.stats then Clocks.report ()
