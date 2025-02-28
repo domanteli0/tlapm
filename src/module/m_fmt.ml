@@ -134,7 +134,8 @@ let pp_print_modctx ff mcx =
   Sm.iter
     (fun _ m ->
        pp_print_module (Deque.empty, Ctx.dot) ff m ;
-       pp_print_cut ff ()) mcx ;
+       pp_print_cut ff ()
+    ) mcx ;
   pp_close_box ff ()
 
 let summary mule = match mule.core.stage with

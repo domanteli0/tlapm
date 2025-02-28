@@ -55,7 +55,11 @@ Exchange(i, j) == [Id EXCEPT ![i] = j, ![j] = i]
 (* correctness of Bubble Sort.                                             *)
 (***************************************************************************)
 THEOREM IdAPerm == Id \in Perms
-BY DEF Perms, Id
+\* BY DEF Perms, Id
+OBVIOUS
+
+========
+
 
 THEOREM IdIdentity == \A A \in [1..N -> Int] : A ** Id = A
 BY DEF Id, **
@@ -68,7 +72,6 @@ BY IdAPerm, IdIdentity DEF IsPermOf, Id
 THEOREM ExchangeAPerm == \A i, j \in 1..N : Exchange(i, j) \in Perms
 BY Zenon DEF Perms, Exchange, Id
 
-========
 
 THEOREM IsPermOfExchange ==
            \A A \in [1..N -> Int],  i, j \in 1..N :

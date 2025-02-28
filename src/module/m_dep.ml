@@ -58,10 +58,16 @@ let external_deps m =
   !deps, !locals, !submodules
 
 (**
+ Takes a module context, analyzes the dependencies between modules.
+ Returns a new module context along with a list of modules ordered
+ in such a way that each module appears after all of its dependencies.
+
  @param mcx Sm (StringMap) of mule_ wrapped *)
 let schedule mcx =
 
-  (* computes the dependency order between modules*)
+  (** Computes the dependency order between modules.
+
+  Each module name is associated with its set of dependencies *)
   let moddeps = Sm.fold begin
     fun key modul accum ->
       Sm.add key (let (e, _, _) = (external_deps modul) in e) accum

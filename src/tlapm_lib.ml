@@ -277,7 +277,17 @@ let toolbox_clean arr =
         then List.filter toolbox_consider (Array.to_list arr)
         else Array.to_list arr
 
+(**
+Copilot:
 
+    The function [process_module] updates the module context with a processed version of a given module. It:
+
+    + Registers the module as “important” if necessary (creating its output directory with {!Tlapm_lib.mkdir_tlaps}).
+    + If the module is not yet finalized, normalizes it via {!Module.Elab.normalize} to generate proof obligations.
+    Saves the finalized module through {!Module.Save.store_module}.
+    + If the module is important, checks and proves its obligations by calling {!process_obs}.
+    Returns the updated module context and the processed module.
+*)
 let process_module
         mcx
         (t: Module.T.mule) =
@@ -306,6 +316,7 @@ let process_module
     | Final _ ->
         if Params.debugging "rep" && t.core.important then begin
             Clocks.start Clocks.print ;
+            Format.printf "REP:\n" ;
             Module.Fmt.pp_print_module
                 (Deque.empty, Ctx.dot) Format.std_formatter t ;
             Format.printf "\n%!" ;
@@ -317,19 +328,26 @@ let process_module
             Util.printf "(* processing module %S *)" t.core.name.core
         end ;
         Clocks.start Clocks.elab ;
+(*
+        let print_test_verbose str =
+          if !Params.verbose && t.core.important  then begin
+                    Format.printf "[VERBOSE] BEGIN PROCESS MODULE:\n%!" ;
+                    Format.printf "%s\n%!" str ;
+                    List.iter
+                      (fun u -> Module.Fmt.pp_print_module (Deque.empty, Ctx.dot) Format.std_formatter (snd u))
+                      (Sm.bindings mcx);
+                    Sm.iter
+                      (fun f u -> Printf.printf "Module: %s\n" u.core.name.core)
+                      mcx;
+                    Format.printf "[VERBOSE] END PROCESS MODULE\n%!" ;
+                  end in
+
+        print_test_verbose "[VERBOSE] [BEFORE NORMALIZE] BEGIN PROCESS MODULE:" ; *)
         (* Normalize the proofs in order to get proof obligations *)
         let (mcx, t, summ) = Module.Elab.normalize mcx Deque.empty t in
-        (*
-        List.iter
-            (fun u -> Module.Fmt.pp_print_module
-                (Deque.empty, Ctx.dot) Format.std_formatter (snd u))
-            (Sm.bindings mcx);
-        *)
-        (*
-        let _ = Sm.iter
-                    (fun f u -> Printf.printf "Module: %s\n" u.core.name.core)
-                    mcx in
-        *)
+
+        (* print_test_verbose "[VERBOSE] [AFTER NORMALIZE] BEGIN PROCESS MODULE:" ; *)
+
         Clocks.stop () ;
         if Params.debugging "rep" && t.core.important then begin
             Clocks.start Clocks.print ;
@@ -569,7 +587,7 @@ let main fs =
     (* load the transitive closure over extends of all modules *)
     (* TODO: load also modules that occur in `INSTANCE` statements from extended modules. *)
     let mcx = Module.Save.complete_load ~clock:Clocks.parsing mcx in
-    let test_print () = 
+    let test_print () =
         Format.print_string "BEGIN: [MAIN] modctx\n";
         Module.Fmt.pp_print_modctx std_fmt mcx;
         Format.print_string "END: [MAIN] modctx\n" in
@@ -580,12 +598,13 @@ let main fs =
         (* processing the proofs in the commandline modules *)
         let (mcx, m) = process_module mcx m in
         let test_print () =
-            Format.print_string "BEGIN: [LOOP]\n";
-            Format.print_string "[LOOP] modctx\n";
-            Module.Fmt.pp_print_modctx std_fmt mcx;
-            Format.print_string "[LOOP] module\n";
-            Module.Fmt.pp_print_module (Deque.empty, Ctx.dot) std_fmt m;
-            Format.print_string "END: [LOOP]\n" in
+          (* match m.core.name.core with *)
+            (* | "Bubblesort" -> *)
+                Format.printf "MODULE: %s\n" m.core.name.core;
+                Format.print_string "BEGIN: [LOOP]\n";
+                Module.Fmt.pp_print_modctx std_fmt mcx;
+                Format.print_string "END: [LOOP]\n" in
+            (* | _ -> Format.printf "SKIPPED MODULE: %s\n" m.core.name.core  in *)
         if Params.debugging "test_print" then test_print ();
         Sm.add m.core.name.core m mcx
       in
