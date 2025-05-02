@@ -1066,7 +1066,66 @@ let assert_module_exists name mcx mu =
     end
 
 
-(* is_anon = false => not yet anonymised *)
+(**
+Copilot:
+
+The [normalize] function in [m_elab.ml] is a crucial function that processes TLA+ modules to prepare them for proof generation. Here's a breakdown of its key aspects:
+
+1. {b Purpose}:
+  - It takes a module context ([mcx]), a context ([cx]), and a module ([m]) as input
+  - It transforms module units (definitions, theorems, etc.) into a normalized form
+  - It handles instantiations of modules
+  - It processes proofs and generates proof obligations
+
+2. {b Key Operations}:
+{@ocaml[
+let rec normalize mcx cx m =
+  let origbody = m.core.body in
+  let prefix = ref Deque.empty in  (* Accumulates processed module units *)
+  let emit mu = prefix := Deque.snoc !prefix mu in
+  let gencx = cx in
+]}
+
+3. {b Main Processing}:
+  - Uses an inner [spin] function that recursively processes each module unit
+  - Handles different types of module units:
+  {ul
+    {- Definitions}
+    {- Theorems}
+    {- Axioms}
+    {- Constants/Variables}
+    {- Module instantiations}
+    {- Submodules}
+  }
+
+4. {b Key Transformations}:
+
+  - Merges identical operator definitions
+  - Processes proofs in theorems
+  - Handles module instantiations through [create_instance]
+  - Applies constant and anonymous transformations via visitors
+  - Maintains context by accumulating hypotheses
+
+5. {b Final Steps}:
+{@ocaml[
+let m = { m.core with body = prefix } @@ m in
+let (m, obs, summ) =
+  if m.core.important then M_gen.generate gencx m
+  else (m, [], { ... })
+]}
+- Updates the module body with processed units
+- Generates proof obligations if the module is marked as important
+- Updates the module stage to [Final] with the generated obligations
+
+The function is central to the TLA+ proof system as it:
++ Normalizes module content into a standard form
++ Processes proofs and theorems
++ Generates proof obligations that will be checked by backend provers
++ Handles module dependencies and instantiations
++ Maintains proof contexts and hypotheses
+
+This processed form is what enables the rest of the TLAPM system to perform proof checking and verification.
+*)
 let rec normalize mcx cx m =
   let origbody = m.core.body in
   let prefix = ref Deque.empty in

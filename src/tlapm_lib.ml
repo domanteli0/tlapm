@@ -460,6 +460,7 @@ let process_module
             | _ -> []
         in
 
+        (* NOTE: [process_obs]  *)
         begin
         if not !Params.suppress_all then
             process_obs t fin.final_obs
@@ -594,7 +595,7 @@ let main fs =
     if Params.debugging "test_print" then test_print ();
     (* flatten the modules *)
     let (mcx, mods) = Module.Dep.schedule mcx in
-      let f mcx m =
+      let process_module_f mcx m =
         (* processing the proofs in the commandline modules *)
         let (mcx, m) = process_module mcx m in
         let test_print () =
@@ -608,7 +609,7 @@ let main fs =
         if Params.debugging "test_print" then test_print ();
         Sm.add m.core.name.core m mcx
       in
-      ignore (List.fold_left f mcx mods)
+      ignore (List.fold_left process_module_f mcx mods)
   end ;
   if !Params.stats then Clocks.report ()
 

@@ -14,7 +14,48 @@ open M_t
 
 (* let debug = Printf.eprintf *)
 
+(**
+The [generate] function in [m_gen.ml] is responsible for generating proof obligations from a TLA+ module. Here's a detailed breakdown:
 
+1. {b Purpose and Inputs}:
+
+{@ocaml[
+let rec generate cx m =
+  let obs : obligation list ref = ref [] in  (* accumulates proof obligations *)
+  let emit ob = obs := ob :: !obs in
+  let rsumm : summary ref = ref empty_summary in  (* tracks proof statistics *)
+  let fincx = ref Deque.empty in  (* final context *)
+]}
+
+2. {b Main Processing} via the inner [visit] function which recursively processes module units:
+
+3. {b Key Operations}:
+{ul {- Processes each module unit in the module body
+}{- Generates proof obligations for theorems using [Proof.Gen.generate]
+}{- Maintains context by accumulating definitions and facts
+}{- Tracks proof statistics in the summary
+}{- Handles nested submodules recursively
+}}
+
+4. {b Output}:
+
+Returns:
+{ul {- The processed module with updated body
+}{- List of generated proof obligations
+}{- Summary of proof statistics
+}}
+
+This function is central to the proof generation phase of TLAPM:
+{ol {+ It translates TLA+ theorems and their proofs into proof obligations
+}{+ These obligations are what will be sent to backend provers for verification
+}{+ It maintains the mathematical context needed for proving
+}{+ It tracks statistics about the proof obligations generated
+}}
+
+The generated proof obligations form the basis for what will be checked by automated theorem provers or interactive proof assistants in later stages of TLAPM's processing.
+
+
+*)
 let rec generate cx m =
   let obs : obligation list ref = ref [] in
   let emit ob = obs := ob :: !obs in
